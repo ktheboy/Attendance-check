@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>เช็คชื่อเซิร์ฟเวอร์ TK 2</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries">
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+        let editingIndex = null;
+
+        function renderList() {
+            const list = document.getElementById("list");
+            const count = document.getElementById("count");
+            list.innerHTML = "";
+            
+            if (users.length === 0) {
+                list.innerHTML = `<p class="text-center text-slate-500 py-8 text-sm italic">ยังไม่มีข้อมูล 👾</p>`;
+            }
+
+            users.forEach((user, index) => {
+                const card = document.createElement('div');
+                card.className = "card";
+                card.innerHTML = `
+                    <img class="profile" src="${user.image}"/>
+<div class="card-info flex-1">
+<p><strong>Discord:</strong> ${user.discord}</p>
+<p><strong>ชื่อเล่น:</strong> ${user.nickname}</p>
+<p><strong>อายุ:</strong> ${user.age}</p>
+</div>
+<button class="!w-auto !p-2 !mt-0 !bg-slate-700 hover:!bg-slate-600 !shadow-none !rounded-xl" onclick="editUser(${index})">
+<span>✏️</span>
+</button>
+                `;
+                list.appendChild(card);
+            });
+            count.innerText = users.length;
+        }
+
+        function editUser(index) {
+            const user = users[index];
+            editingIndex = index;
+            
+            document.getElementById("discordName").value = user.discord;
+            document.getElementById("nickname").value = user.nickname;
+            document.getElementById("age").value = user.age;
+            
+            // Change button text
+            document.getElementById("submitBtnText").innerText = "🆙 อัปเดตข้อมูล";
+            
+            // Scroll to form
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function submitData() {
+            const fileInput = document.getElementById("profileImage");
+            const file = fileInput.files[0];
+            const discord = document.getElementById("discordName").value.trim();
+            const nickname = document.getElementById("nickname").value.trim();
+            const age = document.getElementById("age").value.trim();
+
+            if (!discord || !nickname || !age) {
+                alert("กรุณากรอกข้อมูลให้ครบทุกช่อง! ⚠️");
+                return;
+            }
+
+            const handleSave = (imageData) => {
+                const userData = {
+                    image: imageData || (editingIndex !== null ? users[editingIndex].image : ''),
+                    discord,
+                    nickname,
+                    age
+                };
+
+                if (editingIndex !== null) {
+                    users[editingIndex] = userData;
+                    editingIndex = null;
+                } else {
+                    if (!file) {
+                        alert("กรุณาอัพโหลดรูปโปรไฟล์! 📸");
+                        return;
+                    }
+                    users.push(userData);
+                }
+
+                localStorage.setItem("users", JSON.stringify(users));
+                
+                // Reset Form
+                fileInput.value = "";
+                document.getElementById("discordName").value = "";
+                document.getElementById("nickname").value = "";
+                document.getElementById("age").value = "";
+                document.getElementById("submitBtnText").innerText = "💾 บันทึกข้อมูล";
+                
+                renderList();
+            };
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => handleSave(e.target.result);
+                reader.readAsDataURL(file);
+... (347 บรรทัด)
