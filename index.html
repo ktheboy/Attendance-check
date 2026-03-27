@@ -98,4 +98,350 @@
                 const reader = new FileReader();
                 reader.onload = (e) => handleSave(e.target.result);
                 reader.readAsDataURL(file);
-... (347 บรรทัด)
+            } else {
+                handleSave();
+            }
+        }
+
+        renderList();
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #0d0e14;
+            background-image: radial-gradient(circle at 50% 0%, #1a1c2c 0%, #0d0e14 100%);
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px 0;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Subtle mesh pattern overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(rgba(88, 101, 242, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: -1;
+        }
+
+        /* Floating Emoji Decorations */
+        .floating-emoji {
+            position: absolute;
+            font-size: 24px;
+            opacity: 0.2;
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(1px);
+        }
+
+        /* Glowing accents */
+        .glow-accent {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+            filter: blur(60px);
+            z-index: -1;
+            border-radius: 50%;
+        }
+
+        .container {
+            background: rgba(22, 23, 34, 0.8);
+            backdrop-filter: blur(16px);
+            padding: 30px 24px;
+            margin: 20px auto;
+            width: 92%;
+            max-width: 420px;
+            border-radius: 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            z-index: 10;
+        }
+
+        .top-image {
+            width: 130px;
+            height: 130px;
+            border-radius: 30px;
+            margin: 0 auto 24px;
+            box-shadow: 0 0 40px rgba(255, 140, 0, 0.25), 0 0 15px rgba(139, 92, 246, 0.3);
+            object-fit: cover;
+            display: block;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: #1a1b26;
+        }
+
+        input[type="text"], input[type="number"], input[type="file"] {
+            width: 100%;
+            padding: 14px 16px;
+            margin: 10px 0;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(10, 10, 15, 0.6);
+            color: white;
+            box-sizing: border-box;
+            font-size: 15px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+            background: rgba(15, 15, 25, 0.9);
+        }
+
+        /* Custom file input look */
+        input[type="file"]::file-selector-button {
+            background: rgba(139, 92, 246, 0.1);
+            color: #a78bfa;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 8px;
+            padding: 4px 12px;
+            margin-right: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        
+        input[type="file"]::file-selector-button:hover {
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px -5px rgba(99, 102, 241, 0.5);
+            filter: brightness(1.1);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .card {
+            margin-top: 15px;
+            padding: 16px;
+            background: rgba(30, 31, 46, 0.4);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.2s;
+        }
+        
+        .card:hover {
+            border-color: rgba(139, 92, 246, 0.3);
+            background: rgba(30, 31, 46, 0.6);
+        }
+
+        img.profile {
+            width: 58px;
+            height: 58px;
+            border-radius: 14px;
+            object-fit: cover;
+            border: 2px solid #6366f1;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .card-info p {
+            margin: 1px 0;
+            font-size: 13px;
+            color: rgba(226, 232, 240, 0.7);
+        }
+        
+        .card-info strong {
+            color: #a78bfa;
+            font-weight: 500;
+        }
+
+        .count-badge {
+            background: rgba(99, 102, 241, 0.2);
+            color: #a5b4fc;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .header-with-emoji {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="glow-accent" style="top: -100px; right: -100px;"></div>
+<div class="glow-accent" style="bottom: -100px; left: -100px; background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);"></div>
+<!-- Decorative Emojis -->
+<span class="floating-emoji" style="top: 5%; left: 10%;">👾</span>
+<span class="floating-emoji" style="top: 15%; right: 15%;">⚡</span>
+<span class="floating-emoji" style="bottom: 10%; right: 10%;">🔥</span>
+<span class="floating-emoji" style="bottom: 20%; left: 15%;">🎮</span>
+<div class="container">
+<!-- 🔥 รูปด้านบน -->
+<img alt="TK2 Logo" class="top-image" src="https://lh3.googleusercontent.com/aida/ADBb0uiO8caGIZYB6v74RY27ML_mkwS03-y4ylprTO-dGz1zQko4UJDEgK7yioIAyUqB6GAGJ52XYVMJdMEA15q-m2foSEHkm288CRg7_ThqhasAKqfgUsFQaCiMvfSnFV2h99aJ6pGhGvI7nzZnIs6sBaNQnKQyfDtYgH7hbqNo6wia-fpuvcqP9nLIaDvppKDHxoUpDcJqJLRYlj5ErInUgfT3lMIg_u0Yz7qqZ3_8Zfz6eDWNGWpTT2-308QlE5FrGf8T8J4T24eF"/>
+<div class="header-with-emoji mb-6">
+<span class="text-2xl">🎮</span>
+<h2 class="text-xl font-semibold tracking-tight">เช็คชื่อเซิร์ฟเวอร์ TK 2</h2>
+</div>
+<div class="space-y-4">
+<div>
+<label class="text-xs font-medium text-slate-400 ml-1 mb-1 block">📸 อัพโหลดรูปโปรไฟล์</label>
+<input accept="image/*" id="profileImage" type="file"/>
+</div>
+<div class="relative">
+<input id="discordName" placeholder="👤 ชื่อ Discord" type="text"/>
+</div>
+<div class="relative">
+<input id="nickname" placeholder="🏷️ ชื่อเล่น" type="text"/>
+</div>
+<div class="relative">
+<input id="age" placeholder="🎂 อายุ" type="number"/>
+</div>
+<button id="submitBtn" onclick="submitData()"><span id="submitBtnText">💾 บันทึกข้อมูล</span> <span class="text-xs opacity-70">⚡</span></button>
+</div>
+</div>
+<div class="container">
+<div class="flex justify-between items-center mb-6">
+<div class="header-with-emoji">
+<span class="text-xl">📋</span>
+<h3 class="text-lg font-medium">รายชื่อที่เช็คแล้ว <span class="text-yellow-400">✨</span></h3>
+</div>
+<span class="count-badge"><span id="count">0</span> คน</span>
+</div>
+<div class="space-y-3" id="list">
+<!-- Cards will appear here -->
+<p class="text-center text-slate-500 py-8 text-sm italic">ยังไม่มีข้อมูล 👾</p>
+</div>
+</div>
+<script>
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+        let editingIndex = null;
+
+        function renderList() {
+            const list = document.getElementById("list");
+            const count = document.getElementById("count");
+            list.innerHTML = "";
+            
+            if (users.length === 0) {
+                list.innerHTML = `<p class="text-center text-slate-500 py-8 text-sm italic">ยังไม่มีข้อมูล 👾</p>`;
+            }
+
+            users.forEach((user, index) => {
+                const card = document.createElement('div');
+                card.className = "card";
+                card.innerHTML = `
+                    <img class="profile" src="${user.image}"/>
+<div class="card-info flex-1">
+<p><strong>Discord:</strong> ${user.discord}</p>
+<p><strong>ชื่อเล่น:</strong> ${user.nickname}</p>
+<p><strong>อายุ:</strong> ${user.age}</p>
+</div>
+<button class="!w-auto !p-2 !mt-0 !bg-slate-700 hover:!bg-slate-600 !shadow-none !rounded-xl" onclick="editUser(${index})">
+<span>✏️</span>
+</button>
+                `;
+                list.appendChild(card);
+            });
+            count.innerText = users.length;
+        }
+
+        function editUser(index) {
+            const user = users[index];
+            editingIndex = index;
+            
+            document.getElementById("discordName").value = user.discord;
+            document.getElementById("nickname").value = user.nickname;
+            document.getElementById("age").value = user.age;
+            
+            // Change button text
+            document.getElementById("submitBtnText").innerText = "🆙 อัปเดตข้อมูล";
+            
+            // Scroll to form
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function submitData() {
+            const fileInput = document.getElementById("profileImage");
+            const file = fileInput.files[0];
+            const discord = document.getElementById("discordName").value.trim();
+            const nickname = document.getElementById("nickname").value.trim();
+            const age = document.getElementById("age").value.trim();
+
+            if (!discord || !nickname || !age) {
+                alert("กรุณากรอกข้อมูลให้ครบทุกช่อง! ⚠️");
+                return;
+            }
+
+            const handleSave = (imageData) => {
+                const userData = {
+                    image: imageData || (editingIndex !== null ? users[editingIndex].image : ''),
+                    discord,
+                    nickname,
+                    age
+                };
+
+                if (editingIndex !== null) {
+                    users[editingIndex] = userData;
+                    editingIndex = null;
+                } else {
+                    if (!file) {
+                        alert("กรุณาอัพโหลดรูปโปรไฟล์! 📸");
+                        return;
+                    }
+                    users.push(userData);
+                }
+
+                localStorage.setItem("users", JSON.stringify(users));
+                
+                // Reset Form
+                fileInput.value = "";
+                document.getElementById("discordName").value = "";
+                document.getElementById("nickname").value = "";
+                document.getElementById("age").value = "";
+                document.getElementById("submitBtnText").innerText = "💾 บันทึกข้อมูล";
+                
+                renderList();
+            };
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => handleSave(e.target.result);
+                reader.readAsDataURL(file);
+            } else {
+                handleSave();
+            }
+        }
+
+        renderList();
+    </script>
+</body></html>
